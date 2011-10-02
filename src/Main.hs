@@ -38,7 +38,8 @@ data CountsInfo = CountsInfo  {countsSorted :: [(String, Integer)]
 
 countWords :: [String] -> M.Map String Integer
 countWords strs =
-  foldr addCounts M.empty strs
+  --foldr addCounts M.empty strs
+  foldl' (\acc wrd -> M.insertWith' (+) wrd 1 acc) M.empty strs
 addCounts :: String -> M.Map String Integer-> M.Map String Integer
 addCounts wrd acc =
   M.insertWith' (+) wrd 1 acc
@@ -51,7 +52,7 @@ tSortedList = sortWords tCounts
 
 scaleCounts :: [(String, Integer)] -> CountsInfo
 scaleCounts xs =
-    let maxWordLength = foldl (\acc x -> max acc $ fromIntegral $length $ fst x) 0 xs
+    let maxWordLength = foldl' (\acc x -> max acc $ fromIntegral $length $ fst x) 0 xs
         maxCount = snd $ head xs
     in
       CountsInfo
@@ -87,7 +88,7 @@ main = do x <- getContents
           file <- readFile $ head $ words $ x
           let wordsInFile = words file
           printChart $ scaleCounts $ sortWords $ countWords wordsInFile
-          --print wordsInFile
+          --print $ countWords wordsInFile
 
 
 
