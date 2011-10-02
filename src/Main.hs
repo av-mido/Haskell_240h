@@ -49,10 +49,6 @@ sortWords counts =
     L.sortBy ((flip compare) `on` snd) $ M.toList counts
 tSortedList = sortWords tCounts
 
-
---TODO -> as a last step, filter out all pairs where count is 0!
--- because we dont want to print empty bars later
---just kidding, this wont happen because all fractions are rounded up
 scaleCounts :: [(String, Integer)] -> CountsInfo
 scaleCounts xs =
     let maxWordLength = foldl (\acc x -> max acc $ fromIntegral $length $ fst x) 0 xs
@@ -63,22 +59,17 @@ scaleCounts xs =
         maxWordLength
 tScaleCounts = scaleCounts tSortedList
 
+--not sure how to avoid using fromIntegral...
 scaleCount :: Integer -> Integer -> Integer -> Integer
 scaleCount x maxCount maxWordLen =
     let maxBarLength = maxRowLength - maxWordLen - spaceBuffer
     in
       ceiling $ (fromIntegral maxBarLength)
       * (fromIntegral x / fromIntegral maxCount)
-t2 = scaleCount 2 8 10 --2 8 10 --> 17 assuming maxRowLength equals 80
-t3 = scaleCount 3 3 3
+
 printChart :: CountsInfo -> IO ()
---printCharts [] = putStrLn "end"
 printChart info =
     let xs = countsSorted info
-       -- recurs =
-       --           do putStr $ fst $ head xs
-       --           putStr "   " --change later
-        --          putStr $ snd $ head xs
     in
        mapM_ (printOneBar $ maxWordLength info) xs
 tPrintChart = printChart tScaleCounts
@@ -91,25 +82,10 @@ printOneBar maxWrdLen x =
        putStr "  " --2 spaces extra buffer
        putStrLn $ L.genericReplicate (snd x) '#'
 
---printSpaces :: Integer -> String -> String
---printSpaces maxWordLen word =
---    replicate () ' '
-
-
-
-         --printCharts xs maxWordLength
---tPrintCharts = printCharts tScaleCounts
-
---mainOld = do x <- getContents
---          print $ head $ words x
---          let file = readFile $ head $ words $ x
---          let zz = file >>= (return . words)
---          (zz >>= (return . head)) >>= putStrLn
-
 main = do x <- getContents
-          let file1 = readFile $ head $ words $ x --here file is of type monad IO
-          file <- readFile $ head $ words $ x -- here file is of type String
-          let wordsInFile = words file --wordsInFile is of type [String]
+          let file1 = readFile $ head $ words $ x
+          file <- readFile $ head $ words $ x
+          let wordsInFile = words file
           printChart $ scaleCounts $ sortWords $ countWords wordsInFile
           --print wordsInFile
 
