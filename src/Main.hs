@@ -21,13 +21,6 @@ import Data.List as L
 import Data.Function as F
 import Data.Ord as Ord
 
-testFn y =
-  if (length y) > 0
-  then
-    print "2" >> (return $ length $ words y)
-  else
-    return 2
-
 --CONSTANT
 maxRowLength = 80
 spaceBuffer = 2
@@ -37,17 +30,13 @@ data CountsInfo = CountsInfo  {countsSorted :: [(String, Integer)]
 
 
 countWords :: [String] -> M.Map String Integer
-countWords strs =
-  --foldr addCounts M.empty strs
-  foldl' (\acc wrd -> M.insertWith' (+) wrd 1 acc) M.empty strs
-addCounts :: String -> M.Map String Integer-> M.Map String Integer
-addCounts wrd acc =
-  M.insertWith' (+) wrd 1 acc
+countWords =
+  foldl' (\acc wrd -> M.insertWith' (+) wrd 1 acc) M.empty
 tCounts = countWords ["abc", "abc", "def", "abc", "Def", "Def", "long", "looooooooooooong"]
 
 sortWords :: M.Map String Integer -> [(String, Integer)]
 sortWords counts =
-    L.sortBy ((flip compare) `on` snd) $ M.toList counts
+    L.sortBy (flip compare `on` snd) $ M.toList counts
 tSortedList = sortWords tCounts
 
 scaleCounts :: [(String, Integer)] -> CountsInfo
@@ -65,7 +54,7 @@ scaleCount :: Integer -> Integer -> Integer -> Integer
 scaleCount x maxCount maxWordLen =
     let maxBarLength = maxRowLength - maxWordLen - spaceBuffer
     in
-      ceiling $ (fromIntegral maxBarLength)
+      ceiling $ fromIntegral maxBarLength
       * (fromIntegral x / fromIntegral maxCount)
 
 printChart :: CountsInfo -> IO ()
@@ -79,13 +68,13 @@ printOneBar :: Integer -> (String, Integer) -> IO ()
 printOneBar maxWrdLen x =
     do putStr $ fst x
        putStr $
-         L.genericReplicate (maxWrdLen - (fromIntegral $ L.genericLength $ fst x)) ' '
+         L.genericReplicate (maxWrdLen - fromIntegral (L.genericLength $ fst x)) ' '
        putStr "  " --2 spaces extra buffer
        putStrLn $ L.genericReplicate (snd x) '#'
 
 main = do x <- getContents
-          let file1 = readFile $ head $ words $ x
-          file <- readFile $ head $ words $ x
+          let file1 = readFile $ head $ words x
+          file <- readFile $ head $ words x
           let wordsInFile = words file
           printChart $ scaleCounts $ sortWords $ countWords wordsInFile
           --print $ countWords wordsInFile
