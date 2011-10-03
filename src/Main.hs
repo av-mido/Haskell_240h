@@ -20,12 +20,22 @@ import Data.Map as M
 import Data.List as L
 import Data.Function as F
 import Data.Ord as Ord
+import Data.Char as Char
 
 --CONSTANT
 maxRowLength = 80
 spaceBuffer = 2
 data CountsInfo = CountsInfo  {countsSorted :: [(String, Integer)]
                               , maxWordLength :: Integer} deriving Show
+
+toLowerCase :: [String] -> [String]
+toLowerCase = L.map (L.map Char.toLower)
+
+removeOuterPunctuation :: String -> String
+removeOuterPunctuation = reverse .
+                          dropWhile (not . isAlpha) . reverse .
+                          dropWhile (not . isAlpha)
+tRem2 = removeOuterPunctuation "--don't++"
 
 
 
@@ -72,12 +82,19 @@ printOneBar maxWrdLen x =
        putStr "  " --2 spaces extra buffer
        putStrLn $ L.genericReplicate (snd x) '#'
 
-main = do x <- getContents
-          let file1 = readFile $ head $ words x
-          file <- readFile $ head $ words x
-          let wordsInFile = words file
-          printChart $ scaleCounts $ sortWords $ countWords wordsInFile
-          --print $ countWords wordsInFile
+main = do
+          args <- getArgs
+          contents <- if 0 == length args
+                      then
+                        getContents
+                      else
+                        readFile $ head args
+          let wordsInFile = words contents
+          --todo remove empty strings
+          let cleanedWords = L.map removeOuterPunctuation $ toLowerCase wordsInFile
+          let cleanedWords2 = L.filter (not . L.null) cleanedWords
+          printChart $ scaleCounts $ sortWords $ countWords cleanedWords2
+          --print $ sortWords $ countWords cleanedWords2
 
 
 
