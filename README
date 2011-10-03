@@ -1,0 +1,10 @@
+240h Fall 2011
+name: Alex Vasilyev
+
+
+how to run: 
+1) ghc --make Main.hs
+2) echo Macbeth.txt | Main.exe
+
+
+TODO: This still fails on command line arguments and stuff...need to figure that out. Also can't handle multiple files.
