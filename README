@@ -1,10 +1,14 @@
-240h Fall 2011
-name: Alex Vasilyev
+240h Fall 2011 (I'm not really enrolled)
+Alex Vasilyev
 
 
 how to run: 
 1) ghc --make Main.hs
-2) echo Macbeth.txt | Main.exe
+2) a) echo The angry dog jumped over the lazy fox | Main.exe
+   or
+   b) Main.exe Macbeth.txt
+   
+Alternatively, cabal works too.
 
-
-TODO: This still fails on command line arguments and stuff...need to figure that out. Also can't handle multiple files.
+TODO: This still can't handle multiple files; a max of one file can be specified with a command line argument.
+      ...I probably won't end up fixing this.
